@@ -10,7 +10,7 @@
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
    
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <style>
     body {
     font-family: Georgia, 'Times New Roman', Times, sans-serif;
@@ -21,10 +21,25 @@
     .required {
     color: red;
     }
+    .vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    }
+    
+    input[type=number] {
+    -moz-appearance: textfield;
+    }
+
+    #center-button{
+        text-align: center;
+    }
 
 
     </style>
-
+  <!--moz-appearance hides number input up-down arrow key-->
 
 </head>
 <body>
@@ -81,7 +96,7 @@
                         
                         <label for="cname" class="col-sm-2 ">Name: <span class="required">*</span></label>
                         <div class="col-xs-2">
-                            <input type="text" class="form-control" id="c-name"  placeholder="Company Name">
+                            <input type="text" class="form-control" id="c-name"  pattern="^\D*$" placeholder="Company Name">
                         </div>
                     </div>
                     
@@ -95,9 +110,9 @@
                     <div class="form-group row">
                         <label for="cPhone" class="col-sm-2 ">Phone: </label>
                         <div class="col-xs-2">
-                            <input class="form-control"
+                            <input class="form-control numphone"
                                 oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                type="number" maxlength="10" id="c-phone">
+                                type="number" maxlength="10" id="c-phone" placeholder="Company Phone">
                         </div>
                     </div>
 
@@ -192,7 +207,7 @@
                             <div class="form-group row">
                                 <label for="bPhone" class="col-sm-2 ">Phone: </label>
                                 <div class="col-sm-7">
-                                    <input class="form-control"
+                                    <input class="form-control numphone"
                                         oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
                                         type="number" maxlength="10" id="b-phone" placeholder="Buyer Phone">
                                 </div>
@@ -207,17 +222,17 @@
 
    <br> <h2>Invoice Table</h2><br>
     <div class="row clearfix">
-        <div class="col-md-12">
+        <div class="col-md-12 table-responsive p-2">
             <table class="table table-bordered table-hover" id="goods_table">
                 <thead class="table-primary">
                     <th>Sr No.</th>
-                    <th>Name</th>
+                    <th>Item Name</th>
                     <th>GST Rate (In %)</th>
                     <th>Quantity</th>
-                    <th>Item Rate</th>
-                    <th>Amount</th>
+                    <th>Item Rate (In ₹)</th>
+                    <th>Amount (In ₹)</th>
                     <th>IGST</th>
-                    <th>Total</th>
+                    <th>Total (In ₹)</th>
     
                 </thead>
                 <tbody>
@@ -258,9 +273,11 @@
     </div>
     <br>
     <hr style="border-top: 4px dashed #bbb;">
-    <button class="btn btn-secondary" type="submit" style="margin-left: 420px; padding: 30px; border-radius: 55px; font-weight:bold;"
+    <div id="center-button">
+        <button class="btn btn-secondary" type="submit"  style="padding: 30px; border-radius: 55px; font-weight:bold;"
         id="export">Download Invoice as PDF</button>
     <hr style="border-top: 4px dashed #bbb;">
+    </div>
     </div>
     
    
@@ -294,12 +311,18 @@
             calc();
         });
 
-
-
+        //disables scrolling inside input type "number"
+        
 
     });
 
 
+    //disables scrolling inside input type "number"
+    document.addEventListener("wheel", function (event) {
+            if (document.activeElement.type === "number") {
+                document.activeElement.blur();
+            }
+        });
     function calc() {
         $('#goods_table tbody tr').each(function (i, element) {
             var html = $(this).html();
